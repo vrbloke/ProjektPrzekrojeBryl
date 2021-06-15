@@ -37,7 +37,7 @@ void Renderer::Render(wxDC* parentDC, int width, int height) {
 	DrawAxes(dc, FIELD_OF_VIEW, X_ANGLE, Y_ANGLE, Z_ANGLE);
 
 	// Temporary - chosing plane
-	int axis_plane = 2; // 1 - X axis plane, 2 - Y axis plane, 3 - Z axis plane
+	int axis_plane = 3; // 1 - X axis plane, 2 - Y axis plane, 3 - Z axis plane
 
 	// Testowanie algorytmów
 	//Test(data);
@@ -48,7 +48,7 @@ void Renderer::Render(wxDC* parentDC, int width, int height) {
 	Vector4 start_point;
 	Vector4 end_point;
 
-	switch (axis_plane)
+	/*switch (axis_plane)
 	{
 	case 1:
 		DrawXPlane(dc, FIELD_OF_VIEW, X_ANGLE, Y_ANGLE, Z_ANGLE);
@@ -61,7 +61,9 @@ void Renderer::Render(wxDC* parentDC, int width, int height) {
 		break;
 	default:
 		break;
-	}
+	}*/
+
+	DrawPlane(dc, FIELD_OF_VIEW, X_ANGLE, Y_ANGLE, Z_ANGLE);
 
 	if (m_cfg->isGeoLoaded())
 	{
@@ -169,6 +171,49 @@ Vector4 Renderer::TransformVector(Vector4& original, double fov, double x_angle,
 	//to_return = CenterScreen(to_return);
 
 	return to_return;
+}
+
+double Renderer::Dot(const Vector4& lhs, const Vector4& rhs) const {
+	return lhs.GetX() * rhs.GetX() + lhs.GetY() * rhs.GetY() + lhs.GetZ() * rhs.GetZ();
+}
+
+Vector4 Renderer::Cross(const Vector4& lhs, const Vector4& rhs) const {
+	return Vector4(
+		lhs.GetY()*rhs.GetZ() - lhs.GetZ()*rhs.GetY(),
+		lhs.GetZ()*rhs.GetX() - lhs.GetX()*rhs.GetZ(),
+		lhs.GetX()*rhs.GetY() - lhs.GetY()*rhs.GetX()
+	);
+}
+
+double Renderer::Magnitude(const Vector4& org) const {
+	return sqrt(org.GetX() * org.GetX() + org.GetY() * org.GetY() + org.GetZ() * org.GetZ());
+}
+
+Vector4 Renderer::Normalize(const Vector4& org) const {
+	double len = Magnitude(org);
+	return Vector4(org.GetX()/len, org.GetY()/len, org.GetZ()/len);
+}
+
+Vector4 Renderer::FindPerpendicular(const Vector4& p, const double x, const double y) const {
+	return Normalize(Vector4(x, y, (-x * p.GetX() - y * p.GetY()) / p.GetZ()));
+}
+
+std::vector<Vector4> Renderer::FindBasis(const Vector4& p) const {
+	Vector4 v1 = FindPerpendicular(p, 1.0, 0.0);
+	return std::vector<Vector4>({ v1, Normalize(Cross(p, v1)) });
+}
+
+Matrix4 Renderer::TransformPlane(const Vector4& p, const double dist) const {
+	auto basis = FindBasis(p);
+	Vector4 v = Vector4(m_cfg->getVx(), m_cfg->getVy(), m_cfg->getVz());
+	Vector4 v1 = basis[0];
+	Vector4 v2 = basis[1];
+	Matrix4 T;
+	T.data[0][0] = v1.GetX(); T.data[0][1] = v2.GetX(); T.data[0][2] = 0; T.data[0][3] = p.GetX() + (v * (-1 + dist)).GetX();
+	T.data[1][0] = v1.GetY(); T.data[1][1] = v2.GetY(); T.data[1][2] = 0; T.data[1][3] = p.GetY() + (v * (-1 + dist)).GetY();
+	T.data[2][0] = v1.GetZ(); T.data[2][1] = v2.GetZ(); T.data[2][2] = 1; T.data[2][3] = p.GetZ() + (v * (-1 + dist)).GetZ();
+	T.data[3][0] = 0;					T.data[3][1] = 0;					T.data[3][2] = 0; T.data[3][3] = 1;
+	return T;
 }
 
 // Rysuje osie uk³adu wspó³rzêdnych oraz informacjê w rogu panelu o ich kolorach.
@@ -292,6 +337,23 @@ void Renderer::DrawAxes(wxBufferedDC& dc, double fov, double x_angle, double y_a
 	// Default text and pen color
 	dc.SetPen(wxColor(0, 0, 0));
 	dc.SetTextForeground(wxColor(0, 0, 0));
+}
+
+void Renderer::DrawPlane(wxBufferedDC& dc, double fov, double x_angle, double y_angle, double z_angle) {
+	const double px = m_cfg->getPx();
+	const double py = m_cfg->getPy();
+	const double pz = m_cfg->getPz();
+	double pos = -1.0 + (2 * m_plane_start_pos / 100);
+	std::vector<Vector4> plane = { Vector4(-.1,-.1,0), Vector4(.1,-.1,0), Vector4(.1,.1,0), Vector4(-.1,.1,0) };
+	Matrix4 T = TransformPlane(Vector4(px, py, pz), pos);
+	for (auto& v : plane) {
+		v = T * v;
+		v = TransformVector(v, fov, x_angle, y_angle, z_angle);
+	}
+
+	for (int i = 0, j = 1; i < 4; i++, j = ++j % 4) {
+		dc.DrawLine(plane[i].GetX(), plane[i].GetY(), plane[j].GetX(), plane[j].GetY());
+	}
 }
 
 // Poni¿sze trzy funkcje rysuj¹ p³aszczyznê. Ró¿ni¹ siê od siebie tylko argumentami w konstruktorze wektorów. Mo¿na uogólniæ?

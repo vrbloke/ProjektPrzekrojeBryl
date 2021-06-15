@@ -30,7 +30,7 @@ private:
 public:
   Configurer(UIFrame* parent) :
     m_vx(0), m_vy(0), m_vz(0),
-    m_px(0), m_py(0), m_pz(0),
+    m_px(0), m_py(0), m_pz(1),
     m_pos(0),
     m_posX(0), m_posY(0),
     m_sizeX(0), m_sizeY(0),

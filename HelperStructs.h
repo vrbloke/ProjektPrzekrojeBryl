@@ -10,11 +10,11 @@ struct Vector4 {
   Vector4(double d1, double d2, double d3, double d4) : data({ d1, d2, d3, d4 }) {}
   inline void Print(std::ostream& str) { str << data[0] << '\t' << data[1] << '\t' << data[2] << '\t' << data[3]; }
   inline void Set(double d1, double d2, double d3) { data[0] = d1; data[1] = d2; data[2] = d3; data[3] = 1; }
-  inline double GetX() { return data[0]; }
-  inline double GetY() { return data[1]; }
-  inline double GetZ() { return data[2]; }
-  inline Vector4 operator-(const Vector4& rhs) { return Vector4(data[0] - rhs.data[0], data[1] - rhs.data[1], data[2] - rhs.data[2]); }
-  inline Vector4 operator*(double rhs) { return Vector4(data[0]*rhs, data[1]*rhs, data[2]*rhs, data[3]*rhs);  }
+  inline double GetX() const { return data[0]; }
+  inline double GetY() const { return data[1]; }
+  inline double GetZ() const { return data[2]; }
+  inline Vector4 operator-(const Vector4& rhs) const { return Vector4(data[0] - rhs.data[0], data[1] - rhs.data[1], data[2] - rhs.data[2]); }
+  inline Vector4 operator*(double rhs) const { return Vector4(data[0]*rhs, data[1]*rhs, data[2]*rhs, data[3]*rhs);  }
   inline friend Vector4 operator*(double lhs, const Vector4& rhs);
 };
 
