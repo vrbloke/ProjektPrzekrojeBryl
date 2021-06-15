@@ -28,6 +28,7 @@ void Renderer::Render(wxDC* parentDC, int width, int height) {
 	dc.Clear();
 	dc.DestroyClippingRegion();
 	dc.SetClippingRegion(pos_x, pos_y, size_x, size_y);
+	dc.SetDeviceOrigin(pos_x + size_x / 2, pos_y + size_y / 2);
 
 	// Data about figure
 	std::vector<Segment> data = m_cfg->getData();
@@ -165,11 +166,12 @@ Vector4 Renderer::TransformVector(Vector4& original, double fov, double x_angle,
 	to_return = Scale(to_return);
 	to_return = Rotate(to_return, x_angle, y_angle, z_angle);
 	to_return = ApplyPerspective(to_return, fov);
-	to_return = CenterScreen(to_return);
+	//to_return = CenterScreen(to_return);
 
 	return to_return;
 }
 
+// Rysuje osie uk³adu wspó³rzêdnych oraz informacjê w rogu panelu o ich kolorach.
 void Renderer::DrawAxes(wxBufferedDC& dc, double fov, double x_angle, double y_angle, double z_angle)
 {
 	// Drawing X axis
@@ -292,6 +294,7 @@ void Renderer::DrawAxes(wxBufferedDC& dc, double fov, double x_angle, double y_a
 	dc.SetTextForeground(wxColor(0, 0, 0));
 }
 
+// Poni¿sze trzy funkcje rysuj¹ p³aszczyznê. Ró¿ni¹ siê od siebie tylko argumentami w konstruktorze wektorów. Mo¿na uogólniæ?
 void Renderer::DrawXPlane(wxBufferedDC& dc, double fov, double x_angle, double y_angle, double z_angle)
 {
 	double pos = -1.0 + (2 * m_cfg->getPos() / 100);
@@ -355,6 +358,7 @@ void Renderer::DrawZPlane(wxBufferedDC& dc, double fov, double x_angle, double y
 	//UpdatePlanePos(dc, m_cfg->getVz());
 }
 
+// Przesuwa p³aszczyznê wzd³u¿ jej wektora prêdkoœci. Ponadto obs³ugujê zapisywanie animacji do plików.
 void Renderer::UpdatePlanePos(wxBufferedDC& dc, float speed)
 {
 	m_plane_start_pos += (speed / 1000);
