@@ -69,9 +69,9 @@ void UIFrame::RedrawCSection() {
 }
 
 void UIFrame::PlaneChanged(wxCommandEvent& event) {
-  //m_cfg->SetPlane(event.GetSelection() + 1);
+  m_cfg->setPlaneId(event.GetSelection() + 1);
 }
 
 void UIFrame::VelocityOnText(wxCommandEvent& event) {
-  //m_cfg->SetVelocity(std::stof(static_cast<std::string>(event.GetString()));
+  m_cfg->setV(std::stof(static_cast<std::string>(event.GetString())));
 }

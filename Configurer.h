@@ -13,11 +13,11 @@ private:
   // WskaŸnik do g³ównego okna programu.
   UIFrame* m_mainFrame;
   std::vector<Segment> m_prismData;
-  // Wspó³rzêdne wektora prêdkoœci.
-  float m_vx, m_vy, m_vz;
-  // Wspó³rzêdne wektora normalnego p³aszczyzny.
-  float m_px, m_py, m_pz;
-  // Po³o¿enie p³aszczyzny wzd³u¿ kierunku wektora normalnego (0: œrodek uk³adu).
+  // Prêdkoœæ p³aszczyzny.
+  float m_v;
+  // Aktualnie wybrana p³aszczyzna: 1 -- prost. do OX, 2 -- prost do OY, 3 -- prost do OZ.
+  int m_planeId;
+  // Po³o¿enie p³aszczyzny wzd³u¿ osi (0: œrodek uk³adu).
   float m_pos;
   // Rozmiary panelu, na którym wyœwietlany jest przekrój.
   int m_sizeX, m_sizeY;
@@ -29,8 +29,7 @@ private:
   bool m_saveToFile;
 public:
   Configurer(UIFrame* parent) :
-    m_vx(0), m_vy(0), m_vz(0),
-    m_px(0), m_py(0), m_pz(0),
+    m_v(0), m_planeId(1),
     m_pos(0),
     m_posX(0), m_posY(0),
     m_sizeX(0), m_sizeY(0),
@@ -39,18 +38,10 @@ public:
     m_mainFrame(parent)
   {}
 
-  void setVx(float _vx) { m_vx = _vx; }
-  float getVx() const { return m_vx; }
-  void setVy(float _vy) { m_vy = _vy; }
-  float getVy() const  { return m_vy; }
-  void setVz(float _vz) { m_vz = _vz; }
-  float getVz() const { return m_vz; }
-  void setPx(float _px) { m_px = _px; }
-  float getPx() const { return m_px; }
-  void setPy(float _py) { m_py = _py; }
-  float getPy() const { return m_py; }
-  void setPz(float _pz) { m_pz = _pz; }
-  float getPz() const { return m_pz; }
+  void setV(float _v) { m_v = _v; }
+  float getV() const { return m_v; }
+  void setPlaneId(int _pId) { m_planeId = _pId; }
+  float getPlaneId() const { return m_planeId; }
   void setPos(float _pos) { m_pos = _pos; }
   float getPos() const { return m_pos; }
   void setSizeX(int _sizeX) { m_sizeX = _sizeX;  }
