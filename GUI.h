@@ -37,6 +37,7 @@ class MyFrame1 : public wxFrame
 	
 	protected:
 		wxPanel* m_panel1;
+		wxPanel* m_panel2;
 		wxStaticText* m_staticText1;
 		wxStaticText* m_staticText2;
 		wxStaticText* m_staticText3;
@@ -61,6 +62,7 @@ class MyFrame1 : public wxFrame
 		// Virtual event handlers, overide them in your derived class
 		virtual void Redraw( wxPaintEvent& event ) { event.Skip(); }
 		virtual void PanelResized( wxSizeEvent& event ) { event.Skip(); }
+		virtual void RedrawCSection( wxPaintEvent& event ) { event.Skip(); }
 		virtual void VelocityXOnText( wxCommandEvent& event ) { event.Skip(); }
 		virtual void VelocityYOnText( wxCommandEvent& event ) { event.Skip(); }
 		virtual void VelocityZOnText( wxCommandEvent& event ) { event.Skip(); }
@@ -74,7 +76,7 @@ class MyFrame1 : public wxFrame
 	
 	public:
 		
-		MyFrame1( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Przekroje brył 3D"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 772,487 ), long style = wxDEFAULT_FRAME_STYLE|wxTAB_TRAVERSAL );
+		MyFrame1( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Przekroje brył 3D"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 1200,487 ), long style = wxCAPTION|wxCLOSE_BOX|wxSYSTEM_MENU|wxCLIP_CHILDREN|wxTAB_TRAVERSAL );
 		
 		~MyFrame1();
 	

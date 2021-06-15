@@ -18,6 +18,7 @@ class FrameStepper;
 class UIFrame : public MyFrame1 {
 public:
 	UIFrame(wxWindow* parent);
+	~UIFrame();
 
 	virtual void VelocityXOnText(wxCommandEvent& event) override;
 	virtual void VelocityYOnText(wxCommandEvent& event) override;
@@ -32,6 +33,9 @@ public:
 
 	void Redraw(wxPaintEvent& event) override;
 	void Redraw();
+
+	virtual void RedrawCSection(wxPaintEvent& event) override;
+	void RedrawCSection();
 
 	void GetPanelSize(int* width, int* height) { m_panel1->GetSize(width, height); }
 	void GetPanelPosition(int* width, int* height) { m_panel1->GetPosition(width, height); }

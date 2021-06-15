@@ -13,6 +13,10 @@ m_stp(new FrameStepper(this))
     m_cfg->setPos(m_sliderPlaneLocation->GetValue());
 }
 
+UIFrame::~UIFrame() {
+  m_stp->Kill();
+}
+
 void UIFrame::VelocityXOnText(wxCommandEvent& event) { 
   try {
     m_cfg->setVx(std::stof(static_cast<std::string>(event.GetString())));
@@ -99,4 +103,15 @@ void UIFrame::Redraw() {
     m_stp->Run();
   wxClientDC dc(m_panel1);
   m_rnd->Render(&dc, m_panel1->GetSize().x, m_panel1->GetSize().y);
+}
+
+void UIFrame::RedrawCSection(wxPaintEvent& event) {
+  RedrawCSection();
+}
+
+void UIFrame::RedrawCSection() {
+  if (!(m_stp->IsAlive()))
+    m_stp->Run();
+  wxClientDC dc(m_panel2);
+  //m_rnd->RenderCSection(&dc, m_panel2->GetSize().x, m_panel2->GetSize().y);
 }

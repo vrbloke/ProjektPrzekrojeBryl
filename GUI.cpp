@@ -21,6 +21,11 @@ MyFrame1::MyFrame1( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	
 	bSizer1->Add( m_panel1, 2, wxALL|wxEXPAND, 5 );
 	
+	m_panel2 = new wxPanel( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
+	m_panel2->SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_BTNHIGHLIGHT ) );
+	
+	bSizer1->Add( m_panel2, 2, wxEXPAND | wxALL, 5 );
+	
 	wxBoxSizer* bSizer2;
 	bSizer2 = new wxBoxSizer( wxVERTICAL );
 	
@@ -136,6 +141,7 @@ MyFrame1::MyFrame1( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	// Connect Events
 	m_panel1->Connect( wxEVT_PAINT, wxPaintEventHandler( MyFrame1::Redraw ), NULL, this );
 	m_panel1->Connect( wxEVT_SIZE, wxSizeEventHandler( MyFrame1::PanelResized ), NULL, this );
+	m_panel2->Connect( wxEVT_PAINT, wxPaintEventHandler( MyFrame1::RedrawCSection ), NULL, this );
 	m_TextCtrlVelocityX->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( MyFrame1::VelocityXOnText ), NULL, this );
 	m_TextCtrlVelocityY->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( MyFrame1::VelocityYOnText ), NULL, this );
 	m_textCtrlVelocityZ->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( MyFrame1::VelocityZOnText ), NULL, this );
@@ -152,6 +158,7 @@ MyFrame1::~MyFrame1()
 	// Disconnect Events
 	m_panel1->Disconnect( wxEVT_PAINT, wxPaintEventHandler( MyFrame1::Redraw ), NULL, this );
 	m_panel1->Disconnect( wxEVT_SIZE, wxSizeEventHandler( MyFrame1::PanelResized ), NULL, this );
+	m_panel2->Disconnect( wxEVT_PAINT, wxPaintEventHandler( MyFrame1::RedrawCSection ), NULL, this );
 	m_TextCtrlVelocityX->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( MyFrame1::VelocityXOnText ), NULL, this );
 	m_TextCtrlVelocityY->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( MyFrame1::VelocityYOnText ), NULL, this );
 	m_textCtrlVelocityZ->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( MyFrame1::VelocityZOnText ), NULL, this );
