@@ -19,11 +19,6 @@ void Renderer::Render(wxDC* parentDC, int width, int height) {
 	const double Y_ANGLE = 10;
 	const double Z_ANGLE = 10;
 
-	// Model constants
-	const double vx = m_cfg->getVx();
-	const double vy = m_cfg->getVy();
-	const double vz = m_cfg->getVz();
-
 	// DC SETUP
 	dc.Clear();
 	dc.DestroyClippingRegion();
@@ -37,7 +32,7 @@ void Renderer::Render(wxDC* parentDC, int width, int height) {
 	DrawAxes(dc, FIELD_OF_VIEW, X_ANGLE, Y_ANGLE, Z_ANGLE);
 
 	// Temporary - chosing plane
-	int axis_plane = 2; // 1 - X axis plane, 2 - Y axis plane, 3 - Z axis plane
+	m_selected_plane = (PlaneID)m_cfg->getPlaneId(); // 1 - X axis plane, 2 - Y axis plane, 3 - Z axis plane
 
 	// Testowanie algorytmów
 	//Test(data);
@@ -48,20 +43,7 @@ void Renderer::Render(wxDC* parentDC, int width, int height) {
 	Vector4 start_point;
 	Vector4 end_point;
 
-	switch (axis_plane)
-	{
-	case 1:
-		DrawXPlane(dc, FIELD_OF_VIEW, X_ANGLE, Y_ANGLE, Z_ANGLE);
-		break;
-	case 2:
-		DrawYPlane(dc, FIELD_OF_VIEW, X_ANGLE, Y_ANGLE, Z_ANGLE);
-		break;
-	case 3:
-		DrawZPlane(dc, FIELD_OF_VIEW, X_ANGLE, Y_ANGLE, Z_ANGLE);
-		break;
-	default:
-		break;
-	}
+	DrawPlane(dc, m_selected_plane, FIELD_OF_VIEW, X_ANGLE, Y_ANGLE, Z_ANGLE);
 
 	if (m_cfg->isGeoLoaded())
 	{
@@ -77,7 +59,7 @@ void Renderer::Render(wxDC* parentDC, int width, int height) {
 		}
 	}
 
-	UpdatePlanePos(dc, sqrt(vx*vx + vy*vy + vz*vz));
+	UpdatePlanePos(dc, m_cfg->getV());
 }
 
 Vector4 Renderer::Scale(Vector4& original)
@@ -294,74 +276,47 @@ void Renderer::DrawAxes(wxBufferedDC& dc, double fov, double x_angle, double y_a
 	dc.SetTextForeground(wxColor(0, 0, 0));
 }
 
-// Poni¿sze trzy funkcje rysuj¹ p³aszczyznê. Ró¿ni¹ siê od siebie tylko argumentami w konstruktorze wektorów. Mo¿na uogólniæ?
-void Renderer::DrawXPlane(wxBufferedDC& dc, double fov, double x_angle, double y_angle, double z_angle)
-{
-	double pos = -1.0 + (2 * m_cfg->getPos() / 100);
-	Vector4 top_left(-1 + m_plane_start_pos, pos, -1);
-	Vector4 top_right(1 + m_plane_start_pos, pos, -1);
-	Vector4 bottom_right(1 + m_plane_start_pos, pos, 1);
-	Vector4 bottom_left(-1 + m_plane_start_pos, pos, 1);
+void Renderer::DrawPlane(wxDC& dc, PlaneID id, double fov, double x_angle, double y_angle, double z_angle) {
+	std::vector<Vector4> corners;
+	switch (id) {
+	case PlaneID::OYZ:
+		corners = {
+			Vector4(m_plane_pos, -1, -1),
+			Vector4(m_plane_pos, 1, -1),
+			Vector4(m_plane_pos, 1, 1),
+			Vector4(m_plane_pos,-1, 1)
+		};
+		break;
+	case PlaneID::OXZ:
+		corners = {
+			Vector4(-1, m_plane_pos, -1),
+			Vector4(1, m_plane_pos, -1),
+			Vector4(1, m_plane_pos, 1),
+			Vector4(-1, m_plane_pos, 1)
+		};
+		break;
+	case PlaneID::OXY:
+		corners = {
+			Vector4(-1, -1, m_plane_pos),
+			Vector4(1, -1, m_plane_pos),
+			Vector4(1, 1, m_plane_pos),
+			Vector4(-1, 1, m_plane_pos)
+		};
+		break;
+	}
 
-	top_left = TransformVector(top_left, fov, x_angle, y_angle, z_angle);
-	top_right = TransformVector(top_right, fov, x_angle, y_angle, z_angle);
-	bottom_right = TransformVector(bottom_right, fov, x_angle, y_angle, z_angle);
-	bottom_left = TransformVector(bottom_left, fov, x_angle, y_angle, z_angle);
+	for (auto& vec : corners)
+		vec = TransformVector(vec, fov, x_angle, y_angle, z_angle);
 
-	dc.DrawLine(top_left.GetX(), top_left.GetY(), top_right.GetX(), top_right.GetY());
-	dc.DrawLine(top_right.GetX(), top_right.GetY(), bottom_right.GetX(), bottom_right.GetY());
-	dc.DrawLine(bottom_right.GetX(), bottom_right.GetY(), bottom_left.GetX(), bottom_left.GetY());
-	dc.DrawLine(bottom_left.GetX(), bottom_left.GetY(), top_left.GetX(), top_left.GetY());
-
-	//UpdatePlanePos(dc, m_cfg->getVx());
-}
-
-void Renderer::DrawYPlane(wxBufferedDC& dc, double fov, double x_angle, double y_angle, double z_angle)
-{
-	double pos = -1.0 + (2 * m_cfg->getPos() / 100);
-	Vector4 top_left(-1, 1 + m_plane_start_pos, pos);
-	Vector4 top_right(1, 1 + m_plane_start_pos, pos);
-	Vector4 bottom_right(1, -1 + m_plane_start_pos, pos);
-	Vector4 bottom_left(-1, -1 + m_plane_start_pos, pos);
-
-	top_left = TransformVector(top_left, fov, x_angle, y_angle, z_angle);
-	top_right = TransformVector(top_right, fov, x_angle, y_angle, z_angle);
-	bottom_right = TransformVector(bottom_right, fov, x_angle, y_angle, z_angle);
-	bottom_left = TransformVector(bottom_left, fov, x_angle, y_angle, z_angle);
-
-	dc.DrawLine(top_left.GetX(), top_left.GetY(), top_right.GetX(), top_right.GetY());
-	dc.DrawLine(top_right.GetX(), top_right.GetY(), bottom_right.GetX(), bottom_right.GetY());
-	dc.DrawLine(bottom_right.GetX(), bottom_right.GetY(), bottom_left.GetX(), bottom_left.GetY());
-	dc.DrawLine(bottom_left.GetX(), bottom_left.GetY(), top_left.GetX(), top_left.GetY());
-
-	//UpdatePlanePos(dc, m_cfg->getVy());
-}
-
-void Renderer::DrawZPlane(wxBufferedDC& dc, double fov, double x_angle, double y_angle, double z_angle)
-{
-	double pos = -1.0 + (2 * m_cfg->getPos() / 100);
-	Vector4 top_left(-1, pos, -1 + m_plane_start_pos);
-	Vector4 top_right(1, pos, -1 + m_plane_start_pos);
-	Vector4 bottom_right(1, pos, 1 + m_plane_start_pos);
-	Vector4 bottom_left(-1, pos, 1 + m_plane_start_pos);
-
-	top_left = TransformVector(top_left, fov, x_angle, y_angle, z_angle);
-	top_right = TransformVector(top_right, fov, x_angle, y_angle, z_angle);
-	bottom_right = TransformVector(bottom_right, fov, x_angle, y_angle, z_angle);
-	bottom_left = TransformVector(bottom_left, fov, x_angle, y_angle, z_angle);
-
-	dc.DrawLine(top_left.GetX(), top_left.GetY(), top_right.GetX(), top_right.GetY());
-	dc.DrawLine(top_right.GetX(), top_right.GetY(), bottom_right.GetX(), bottom_right.GetY());
-	dc.DrawLine(bottom_right.GetX(), bottom_right.GetY(), bottom_left.GetX(), bottom_left.GetY());
-	dc.DrawLine(bottom_left.GetX(), bottom_left.GetY(), top_left.GetX(), top_left.GetY());
-
-	//UpdatePlanePos(dc, m_cfg->getVz());
+	for (int i = 0, j = 1; i < 4; ++i, j = ++j % 4) {
+		dc.DrawLine(corners[i].GetX(), corners[i].GetY(), corners[j].GetX(), corners[j].GetY());
+	}
 }
 
 // Przesuwa p³aszczyznê wzd³u¿ jej wektora prêdkoœci. Ponadto obs³ugujê zapisywanie animacji do plików.
 void Renderer::UpdatePlanePos(wxBufferedDC& dc, float speed)
 {
-	m_plane_start_pos += (speed / 1000);
+	m_plane_pos += (speed / 1000);
 
 	if (m_saving)
 	{		
@@ -372,9 +327,9 @@ void Renderer::UpdatePlanePos(wxBufferedDC& dc, float speed)
 		image.SaveFile(path, wxBITMAP_TYPE_JPEG);
 	}
 
-	if (m_plane_start_pos >= 2)
+	if (m_plane_pos >= 2)
 	{
-		m_plane_start_pos = -2;
+		m_plane_pos = -2;
 
 		if (m_cfg->isSaveToFile() && m_saving)
 		{
@@ -392,7 +347,7 @@ void Renderer::UpdatePlanePos(wxBufferedDC& dc, float speed)
 	
 	if (m_cfg->isSaveToFile() && !m_saving)
 	{
-		m_plane_start_pos = -2;
+		m_plane_pos = -2;
 		m_saving = true;
 	}
 }
@@ -439,27 +394,27 @@ void Renderer::Test2(std::vector<Segment>& data, int axis_plane)
 		case 1:
 			if (data[i].begin.y > 0 || data[i].end.y > 0)
 			{
-				if (data[i].begin.x < m_plane_start_pos + 1.0)
+				if (data[i].begin.x < m_plane_pos + 1.0)
 					data[i].begin.y = 0;
-				if (data[i].end.x < m_plane_start_pos + 1.0)
+				if (data[i].end.x < m_plane_pos + 1.0)
 					data[i].end.y = 0;
 			}
 			break;
 		case 2:
 			if (data[i].begin.z > 0 || data[i].end.z > 0)
 			{
-				if (data[i].begin.y < m_plane_start_pos + 1.0)
+				if (data[i].begin.y < m_plane_pos + 1.0)
 					data[i].begin.z = 0;
-				if (data[i].end.y < m_plane_start_pos + 1.0)
+				if (data[i].end.y < m_plane_pos + 1.0)
 					data[i].end.z = 0;
 			}
 			break;
 		case 3:
 			if (data[i].begin.y > 0 || data[i].end.y > 0)
 			{
-				if (data[i].begin.z < m_plane_start_pos + 1.0)
+				if (data[i].begin.z < m_plane_pos + 1.0)
 					data[i].begin.y = 0;
-				if (data[i].end.z < m_plane_start_pos + 1.0)
+				if (data[i].end.z < m_plane_pos + 1.0)
 					data[i].end.y = 0;
 			}
 			break;

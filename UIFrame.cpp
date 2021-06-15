@@ -73,5 +73,9 @@ void UIFrame::PlaneChanged(wxCommandEvent& event) {
 }
 
 void UIFrame::VelocityOnText(wxCommandEvent& event) {
-  m_cfg->setV(std::stof(static_cast<std::string>(event.GetString())));
+  try {
+    m_cfg->setV(std::stof(static_cast<std::string>(event.GetString())));
+  }
+  catch (std::out_of_range& ex) {}
+  catch (std::invalid_argument& ex) {}
 }

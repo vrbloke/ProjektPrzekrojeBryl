@@ -8,10 +8,17 @@
 
 class Renderer {
 private:
+  enum PlaneID {
+    OYZ = 1,
+    OXZ = 2,
+    OXY = 3
+  };
+
   std::shared_ptr<Configurer> m_cfg;
   Matrix4 m_rotation_matrix;
   bool m_matrix_set;
-  double m_plane_start_pos;
+  double m_plane_pos;
+  PlaneID m_selected_plane;
   bool m_saving;
   unsigned short int frame;
 
@@ -23,6 +30,8 @@ private:
   Vector4 TransformVector(Vector4& original, double fov = 45, double x_angle = 0, double y_angle = 0, double z_angle = 0);
 
   void DrawAxes(wxBufferedDC& dc, double fov = 45, double x_angle = 0, double y_angle = 0, double z_angle = 0);
+
+  void DrawPlane(wxDC& dc, PlaneID id, double fov, double x_angle, double y_angle, double z_angle);
 
   void DrawXPlane(wxBufferedDC& dc, double fov = 45, double x_angle = 0, double y_angle = 0, double z_angle = 0);
   void DrawYPlane(wxBufferedDC& dc, double fov = 45, double x_angle = 0, double y_angle = 0, double z_angle = 0);
@@ -38,7 +47,8 @@ private:
   void CogenSutherland(std::vector<Segment>& data);
 
 public:
-  Renderer(std::shared_ptr<Configurer> cfg) : m_cfg(cfg), m_rotation_matrix(Matrix4()), m_matrix_set(false), m_plane_start_pos(-2), m_saving(false), frame(0) {
+  Renderer(std::shared_ptr<Configurer> cfg) : m_cfg(cfg), m_rotation_matrix(Matrix4()), 
+    m_matrix_set(false), m_plane_pos(-2), m_saving(false), frame(0), m_selected_plane((PlaneID)1) {
     wxImage::AddHandler(new wxJPEGHandler);
   }
   void Render(wxDC* parentDC, int width, int height);
