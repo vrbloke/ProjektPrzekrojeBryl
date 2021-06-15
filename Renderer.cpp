@@ -19,13 +19,6 @@ void Renderer::Render(wxDC* parentDC, int width, int height) {
 	const double Y_ANGLE = 10;
 	const double Z_ANGLE = 10;
 
-	const double ar = static_cast<double>(width) / height;
-	nr = 0.001, fr = 30;
-	top = tan(FIELD_OF_VIEW / 2) * nr;
-	bottom = -top;
-	right = top * ar;
-	left = -top * ar;
-
 	// Model constants
 	const double vx = m_cfg->getVx();
 	const double vy = m_cfg->getVy();
@@ -55,20 +48,20 @@ void Renderer::Render(wxDC* parentDC, int width, int height) {
 	Vector4 start_point;
 	Vector4 end_point;
 
-	switch (axis_plane)
-	{
-	case 1:
-		DrawXPlane(dc, FIELD_OF_VIEW, X_ANGLE, Y_ANGLE, Z_ANGLE);
-		break;
-	case 2:
-		DrawYPlane(dc, FIELD_OF_VIEW, X_ANGLE, Y_ANGLE, Z_ANGLE);
-		break;
-	case 3:
-		DrawZPlane(dc, FIELD_OF_VIEW, X_ANGLE, Y_ANGLE, Z_ANGLE);
-		break;
-	default:
-		break;
-	}
+	//switch (axis_plane)
+	//{
+	//case 1:
+	//	DrawXPlane(dc, FIELD_OF_VIEW, X_ANGLE, Y_ANGLE, Z_ANGLE);
+	//	break;
+	//case 2:
+	//	DrawYPlane(dc, FIELD_OF_VIEW, X_ANGLE, Y_ANGLE, Z_ANGLE);
+	//	break;
+	//case 3:
+	//	DrawZPlane(dc, FIELD_OF_VIEW, X_ANGLE, Y_ANGLE, Z_ANGLE);
+	//	break;
+	//default:
+	//	break;
+	//}
 
 	DrawPlane(dc, FIELD_OF_VIEW, X_ANGLE, Y_ANGLE, Z_ANGLE);
 
@@ -144,10 +137,8 @@ Vector4 Renderer::Rotate(Vector4& original, double x_angle, double y_angle, doub
 Vector4 Renderer::ApplyPerspective(Vector4& original, double fov)
 {
 	Vector4 to_return;
-	static double c = 0;
 
-	double Z0 = (m_cfg->getSizeX() / 2.0) / tan((fov / 2.0) * 3.14159265 / 180.0) + c;
-	//c = c + 1;
+	double Z0 = (m_cfg->getSizeX() / 2.0) / tan((fov / 2.0) * 3.14159265 / 180.0);
 
 	double x = original.GetX() * Z0 / (original.GetZ() + Z0);
 	double y = original.GetY() * Z0 / (original.GetZ() + Z0);
@@ -176,9 +167,7 @@ Vector4 Renderer::TransformVector(Vector4& original, double fov, double x_angle,
 
 	to_return = Scale(to_return);
 	to_return = Rotate(to_return, x_angle, y_angle, z_angle);
-	//to_return = ApplyPerspective(to_return, fov);
-	//to_return = Project(nr, fr, top, bottom, left, right) * to_return;
-	to_return = frame % 2 ? Project(nr, fr, top, bottom, left, right) * to_return : ApplyPerspective(to_return, fov);
+	to_return = ApplyPerspective(to_return, fov);
 	//to_return = CenterScreen(to_return);
 
 	return to_return;
@@ -324,7 +313,6 @@ void Renderer::DrawPlane(wxBufferedDC& dc, double fov, double x_angle, double y_
 	}
 }
 
-// Poni¿sze trzy funkcje rysuj¹ p³aszczyznê. Ró¿ni¹ siê od siebie tylko argumentami w konstruktorze wektorów. Mo¿na uogólniæ?
 void Renderer::DrawXPlane(wxBufferedDC& dc, double fov, double x_angle, double y_angle, double z_angle)
 {
 	double pos = -1.0 + (2 * m_cfg->getPos() / 100);
