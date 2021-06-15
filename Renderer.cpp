@@ -19,6 +19,11 @@ void Renderer::Render(wxDC* parentDC, int width, int height) {
 	const double Y_ANGLE = 10;
 	const double Z_ANGLE = 10;
 
+	// Model constants
+	const double vx = m_cfg->getVx();
+	const double vy = m_cfg->getVy();
+	const double vz = m_cfg->getVz();
+
 	// DC SETUP
 	dc.Clear();
 	dc.DestroyClippingRegion();
@@ -70,6 +75,8 @@ void Renderer::Render(wxDC* parentDC, int width, int height) {
 			dc.DrawLine(start_point.GetX(), start_point.GetY(), end_point.GetX(), end_point.GetY());
 		}
 	}
+
+	UpdatePlanePos(dc, sqrt(vx*vx + vy*vy + vz*vz));
 }
 
 Vector4 Renderer::Scale(Vector4& original)
@@ -303,7 +310,7 @@ void Renderer::DrawXPlane(wxBufferedDC& dc, double fov, double x_angle, double y
 	dc.DrawLine(bottom_right.GetX(), bottom_right.GetY(), bottom_left.GetX(), bottom_left.GetY());
 	dc.DrawLine(bottom_left.GetX(), bottom_left.GetY(), top_left.GetX(), top_left.GetY());
 
-	UpdatePlanePos(dc, m_cfg->getVx());
+	//UpdatePlanePos(dc, m_cfg->getVx());
 }
 
 void Renderer::DrawYPlane(wxBufferedDC& dc, double fov, double x_angle, double y_angle, double z_angle)
@@ -324,7 +331,7 @@ void Renderer::DrawYPlane(wxBufferedDC& dc, double fov, double x_angle, double y
 	dc.DrawLine(bottom_right.GetX(), bottom_right.GetY(), bottom_left.GetX(), bottom_left.GetY());
 	dc.DrawLine(bottom_left.GetX(), bottom_left.GetY(), top_left.GetX(), top_left.GetY());
 
-	UpdatePlanePos(dc, m_cfg->getVy());
+	//UpdatePlanePos(dc, m_cfg->getVy());
 }
 
 void Renderer::DrawZPlane(wxBufferedDC& dc, double fov, double x_angle, double y_angle, double z_angle)
@@ -345,7 +352,7 @@ void Renderer::DrawZPlane(wxBufferedDC& dc, double fov, double x_angle, double y
 	dc.DrawLine(bottom_right.GetX(), bottom_right.GetY(), bottom_left.GetX(), bottom_left.GetY());
 	dc.DrawLine(bottom_left.GetX(), bottom_left.GetY(), top_left.GetX(), top_left.GetY());
 
-	UpdatePlanePos(dc, m_cfg->getVz());
+	//UpdatePlanePos(dc, m_cfg->getVz());
 }
 
 void Renderer::UpdatePlanePos(wxBufferedDC& dc, float speed)
@@ -353,12 +360,12 @@ void Renderer::UpdatePlanePos(wxBufferedDC& dc, float speed)
 	m_plane_start_pos += (speed / 1000);
 
 	if (m_saving)
-	{
+	{		
 		frame++;
-		std::string path = "D:\\Test\\" + std::to_string(frame) + ".bmp";
+		std::string path = "D:\\Test\\" + std::to_string(frame) + ".jpg";
 		wxBitmap bitmap = dc.GetAsBitmap();
 		wxImage image = bitmap.ConvertToImage();
-		image.SaveFile(path);
+		image.SaveFile(path, wxBITMAP_TYPE_JPEG);
 	}
 
 	if (m_plane_start_pos >= 2)
@@ -371,6 +378,11 @@ void Renderer::UpdatePlanePos(wxBufferedDC& dc, float speed)
 			m_saving = false;
 			frame = 0;
 		}
+	}
+	else if (m_cfg->isSaveToFile() && m_saving && frame > 300) {
+		m_cfg->setSaveToFile(false);
+		m_saving = false;
+		frame = 0;
 	}
 		
 	
