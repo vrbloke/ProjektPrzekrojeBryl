@@ -30,7 +30,7 @@ private:
 public:
   Configurer(UIFrame* parent) :
     m_vx(0), m_vy(0), m_vz(0),
-    m_px(0), m_py(0), m_pz(1),
+    m_px(0), m_py(0), m_pz(0),
     m_pos(0),
     m_posX(0), m_posY(0),
     m_sizeX(0), m_sizeY(0),
@@ -45,11 +45,11 @@ public:
   float getVy() const  { return m_vy; }
   void setVz(float _vz) { m_vz = _vz; }
   float getVz() const { return m_vz; }
-  void setPx(float _px) { m_px = _px; }
+  void setPx(float _px) { m_px = _px; normalizeP(); }
   float getPx() const { return m_px; }
-  void setPy(float _py) { m_py = _py; }
+  void setPy(float _py) { m_py = _py; normalizeP();  }
   float getPy() const { return m_py; }
-  void setPz(float _pz) { m_pz = _pz; }
+  void setPz(float _pz) { m_pz = _pz; normalizeP();  }
   float getPz() const { return m_pz; }
   void setPos(float _pos) { m_pos = _pos; }
   float getPos() const { return m_pos; }
@@ -69,6 +69,13 @@ public:
   //Koniec dopisanych
   std::vector<Segment>& getData() { return m_prismData; }
   void setData(std::vector<Segment>& _data) { m_prismData = _data; }
+
+  void normalizeP() {
+    Vector4 normal = Normalize(Vector4(m_px, m_py, m_pz));
+    //m_px = normal.GetX();
+    //m_py = normal.GetY();
+    //m_pz = normal.GetZ();
+  }
 
   void startAnimation();
 

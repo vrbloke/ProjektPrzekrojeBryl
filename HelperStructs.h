@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <array>
+#include <vector>
 
 struct Vector4 {
   std::array<double,4> data;
@@ -61,3 +62,15 @@ struct Segment {
   Segment(Point _begin, Point _end) : begin(_begin), end(_end), color(Color(0, 0, 255)) {}
   Segment() : begin(Point()), end(Point()), color(Color(0, 0, 255)) {}
 };
+
+double Dot(const Vector4& lhs, const Vector4& rhs);
+Vector4 Cross(const Vector4& lhs, const Vector4& rhs);
+Vector4 Normalize(const Vector4& org);
+double Magnitude(const Vector4& org);
+// p is plane normal, x and y are arbitrarily chosen coordinates of the perpendicular vector. Result is normalized.
+Vector4 FindPerpendicular(const Vector4& p, const double x, const double y);
+// Given plane normal vector p, find two perpendicular vectors perpendicular to p.
+std::vector<Vector4> FindBasis(const Vector4& p);
+// Given plane normal vector p and its root dist, find affine matrix to transform the XY plane into the plane defined by p, v and dist.
+Matrix4 TransformPlane(const Vector4& p, const Vector4& v, const double dist);
+Matrix4 Project(double n, double f, double t, double b, double l, double r);
