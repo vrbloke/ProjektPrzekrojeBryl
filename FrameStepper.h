@@ -11,7 +11,9 @@ public:
   virtual ExitCode Entry() override {
     while (m_frame) {
       Sleep(50);
-      if (m_frame) m_frame->Redraw();
+      if (m_frame) {
+        m_frame->Redraw(); m_frame->RedrawCSection();
+      }
     }
     return (ExitCode)0;
   }
