@@ -24,7 +24,6 @@ Vector4 operator*(double lhs, const Vector4& rhs) {
 
 struct Matrix4 {
   std::array<std::array<double, 4>, 4> data;
-  //double d[4][4];
   Matrix4() : data({ std::array<double,4>({0., 0., 0., 0.}), 
     std::array<double,4>({0., 0. ,0. ,0. }), 
     std::array<double,4>({0., 0., 0., 0.}), 
@@ -33,6 +32,35 @@ struct Matrix4 {
   Matrix4 operator*(const Matrix4&);
   Vector4 operator*(const Vector4&);
   friend Vector4 operator*(const Vector4&, const Matrix4&);
+};
+
+struct Vector3 {
+  std::array<double, 3> data;
+  Vector3() : data({ 0,0,1 }) {}
+  Vector3(double d1, double d2, double d3) : data({ d1, d2, d3 }) {}
+  Vector3(double d1, double d2) : data({ d1, d2, 1 }) {}
+  inline void Print(std::ostream& str) { str << data[0] << '\t' << data[1] << '\t' << data[2]; }
+  inline void Set(double d1, double d2) { data[0] = d1; data[1] = d2; data[2] = 1; }
+  inline double GetX() { return data[0]; }
+  inline double GetY() { return data[1]; }
+  inline Vector3 operator-(const Vector3& rhs) { return Vector3(data[0] - rhs.data[0], data[1] - rhs.data[1]); }
+  inline Vector3 operator*(double rhs) { return Vector3(data[0] * rhs, data[1] * rhs, data[2] * rhs); }
+  inline friend Vector3 operator*(double lhs, const Vector3& rhs);
+};
+
+Vector3 operator*(double lhs, const Vector3& rhs) {
+  return Vector3(rhs.data[0] * lhs, rhs.data[1] * lhs, rhs.data[2] * lhs);
+}
+
+struct Matrix3 {
+  std::array<std::array<double, 3>, 3> data;
+  Matrix3() : data({ std::array<double,3>({0., 0., 0.}),
+    std::array<double,3>({0., 0., 0.}),
+    std::array<double,3>({0., 0., 1.}) }) {}
+  void Print(std::ostream& str) { for (int i = 0; i < 3; i++) for (int j = 0; j < 3; j++) str << data[i][j]; }
+  Matrix3 operator*(const Matrix3&);
+  Vector3 operator*(const Vector3&);
+  friend Vector3 operator*(const Vector3&, const Matrix3&);
 };
 
 struct Point {

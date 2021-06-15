@@ -31,7 +31,7 @@ void Renderer::Render(wxDC* parentDC, int width, int height) {
 	// Axes
 	DrawAxes(dc, FIELD_OF_VIEW, X_ANGLE, Y_ANGLE, Z_ANGLE);
 
-	// Temporary - chosing plane
+	// Choosing plane
 	m_selected_plane = (PlaneID)m_cfg->getPlaneId(); // 1 - X axis plane, 2 - Y axis plane, 3 - Z axis plane
 
 	// Testowanie algorytmów
@@ -60,6 +60,24 @@ void Renderer::Render(wxDC* parentDC, int width, int height) {
 	}
 
 	UpdatePlanePos(dc, m_cfg->getV());
+}
+
+void Renderer::RenderCSection(wxDC* parentDC, int width, int height) {
+	wxBufferedDC dc(parentDC);
+
+	const int size_x = m_cfg->getSizeX();
+	const int size_y = m_cfg->getSizeY();
+	const int pos_x = m_cfg->getPosX();
+	const int pos_y = m_cfg->getPosY();
+
+	dc.Clear();
+	dc.DestroyClippingRegion();
+	dc.SetClippingRegion(pos_x, pos_y, size_x, size_y);
+	dc.SetDeviceOrigin(pos_x + size_x / 2, pos_y + size_y / 2);
+
+	std::vector<Segment> data = m_cfg->getData();
+
+	m_selected_plane = (PlaneID)m_cfg->getPlaneId()
 }
 
 Vector4 Renderer::Scale(Vector4& original)

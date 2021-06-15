@@ -52,4 +52,5 @@ public:
     wxImage::AddHandler(new wxJPEGHandler);
   }
   void Render(wxDC* parentDC, int width, int height);
+  void RenderCSection(wxDC* parentDC, int width, int height);
 };

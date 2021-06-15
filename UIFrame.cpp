@@ -65,7 +65,7 @@ void UIFrame::RedrawCSection() {
   if (!(m_stp->IsAlive()))
     m_stp->Run();
   wxClientDC dc(m_panel2);
-  //m_rnd->RenderCSection(&dc, m_panel2->GetSize().x, m_panel2->GetSize().y);
+  m_rnd->RenderCSection(&dc, m_panel2->GetSize().x, m_panel2->GetSize().y);
 }
 
 void UIFrame::PlaneChanged(wxCommandEvent& event) {
