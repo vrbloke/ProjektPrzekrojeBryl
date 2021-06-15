@@ -20,12 +20,6 @@ public:
 	UIFrame(wxWindow* parent);
 	~UIFrame();
 
-	virtual void VelocityXOnText(wxCommandEvent& event) override;
-	virtual void VelocityYOnText(wxCommandEvent& event) override;
-	virtual void VelocityZOnText(wxCommandEvent& event) override;
-	virtual void PlaneXOnText(wxCommandEvent& event) override;
-	virtual void PlaneYOnText(wxCommandEvent& event) override;
-	virtual void PlaneZOnText(wxCommandEvent& event) override;
 	virtual void PrismDataClick(wxCommandEvent& event) override;
 	virtual void SaveAnimationClick(wxCommandEvent& event) override;
 	virtual void PlaneLocationOnScrollChanged(wxScrollEvent& event) override;
@@ -36,6 +30,9 @@ public:
 
 	virtual void RedrawCSection(wxPaintEvent& event) override;
 	void RedrawCSection();
+
+	virtual void PlaneChanged(wxCommandEvent& event) override;
+	virtual void VelocityOnText(wxCommandEvent& event) override;
 
 	void GetPanelSize(int* width, int* height) { m_panel1->GetSize(width, height); }
 	void GetPanelPosition(int* width, int* height) { m_panel1->GetPosition(width, height); }

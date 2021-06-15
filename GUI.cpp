@@ -29,76 +29,27 @@ MyFrame1::MyFrame1( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	wxBoxSizer* bSizer2;
 	bSizer2 = new wxBoxSizer( wxVERTICAL );
 	
-	m_staticText1 = new wxStaticText( this, wxID_ANY, _("Wektory"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText1 = new wxStaticText( this, wxID_ANY, wxT("Prędkość"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText1->Wrap( -1 );
 	bSizer2->Add( m_staticText1, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5 );
 	
-	wxBoxSizer* bSizer3;
-	bSizer3 = new wxBoxSizer( wxHORIZONTAL );
+	m_TextCtrlVelocityY = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize( 100,-1 ), 0 );
+	bSizer2->Add( m_TextCtrlVelocityY, 0, wxALIGN_CENTER_HORIZONTAL|wxALL, 5 );
 	
-	m_staticText2 = new wxStaticText( this, wxID_ANY, _("prędkości"), wxDefaultPosition, wxSize( 65,-1 ), 0 );
-	m_staticText2->Wrap( -1 );
-	bSizer3->Add( m_staticText2, 0, wxALL, 5 );
+	m_staticText111 = new wxStaticText( this, wxID_ANY, wxT("Płaszczyzna"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText111->Wrap( -1 );
+	bSizer2->Add( m_staticText111, 0, wxALIGN_CENTER|wxALL, 5 );
 	
-	m_staticText3 = new wxStaticText( this, wxID_ANY, _("X"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_staticText3->Wrap( -1 );
-	bSizer3->Add( m_staticText3, 0, wxALL, 5 );
+	wxString m_choicePlaneChoices[] = { wxT("OYZ"), wxT("OXZ"), wxT("OXY") };
+	int m_choicePlaneNChoices = sizeof( m_choicePlaneChoices ) / sizeof( wxString );
+	m_choicePlane = new wxChoice( this, wxID_ANY, wxDefaultPosition, wxSize( 80,-1 ), m_choicePlaneNChoices, m_choicePlaneChoices, 0 );
+	m_choicePlane->SetSelection( 0 );
+	bSizer2->Add( m_choicePlane, 0, wxALIGN_CENTER_HORIZONTAL|wxALL, 5 );
 	
-	m_TextCtrlVelocityX = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize( 40,-1 ), 0 );
-	bSizer3->Add( m_TextCtrlVelocityX, 0, wxALL, 5 );
-	
-	m_staticText4 = new wxStaticText( this, wxID_ANY, _("Y"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_staticText4->Wrap( -1 );
-	bSizer3->Add( m_staticText4, 0, wxALL, 5 );
-	
-	m_TextCtrlVelocityY = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize( 40,-1 ), 0 );
-	bSizer3->Add( m_TextCtrlVelocityY, 0, wxALL, 5 );
-	
-	m_staticText5 = new wxStaticText( this, wxID_ANY, _("Z"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_staticText5->Wrap( -1 );
-	bSizer3->Add( m_staticText5, 0, wxALL, 5 );
-	
-	m_textCtrlVelocityZ = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize( 40,-1 ), 0 );
-	bSizer3->Add( m_textCtrlVelocityZ, 0, wxALL, 5 );
-	
-	
-	bSizer2->Add( bSizer3, 1, wxEXPAND, 5 );
-	
-	wxBoxSizer* bSizer5;
-	bSizer5 = new wxBoxSizer( wxHORIZONTAL );
-	
-	m_staticText6 = new wxStaticText( this, wxID_ANY, _("płaszczyzny"), wxDefaultPosition, wxSize( 65,-1 ), 0 );
-	m_staticText6->Wrap( -1 );
-	bSizer5->Add( m_staticText6, 0, wxALL, 5 );
-	
-	m_staticText7 = new wxStaticText( this, wxID_ANY, _("X"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_staticText7->Wrap( -1 );
-	bSizer5->Add( m_staticText7, 0, wxALL, 5 );
-	
-	m_textCtrlPlaneX = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize( 40,-1 ), 0 );
-	bSizer5->Add( m_textCtrlPlaneX, 0, wxALL, 5 );
-	
-	m_staticText8 = new wxStaticText( this, wxID_ANY, _("Y"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_staticText8->Wrap( -1 );
-	bSizer5->Add( m_staticText8, 0, wxALL, 5 );
-	
-	m_textCtrlPlaneY = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize( 40,-1 ), 0 );
-	bSizer5->Add( m_textCtrlPlaneY, 0, wxALL, 5 );
-	
-	m_staticText9 = new wxStaticText( this, wxID_ANY, _("Z"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_staticText9->Wrap( -1 );
-	bSizer5->Add( m_staticText9, 0, wxALL, 5 );
-	
-	m_textCtrlPlaneZ = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize( 40,-1 ), 0 );
-	bSizer5->Add( m_textCtrlPlaneZ, 0, wxALL, 5 );
-	
-	
-	bSizer2->Add( bSizer5, 1, wxEXPAND, 5 );
-	
-	m_buttonPrismData = new wxButton( this, wxID_ANY, _("Wczytaj dane bryły"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_buttonPrismData = new wxButton( this, wxID_ANY, wxT("Wczytaj dane bryły"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer2->Add( m_buttonPrismData, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5 );
 	
-	m_buttonSaveAnimation = new wxButton( this, wxID_ANY, _("Zapisz animację"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_buttonSaveAnimation = new wxButton( this, wxID_ANY, wxT("Zapisz animację"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer2->Add( m_buttonSaveAnimation, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5 );
 	
 	wxBoxSizer* bSizer6;
@@ -116,7 +67,7 @@ MyFrame1::MyFrame1( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	wxBoxSizer* bSizer9;
 	bSizer9 = new wxBoxSizer( wxHORIZONTAL );
 	
-	m_staticText11 = new wxStaticText( this, wxID_ANY, _("Położenie pł."), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText11 = new wxStaticText( this, wxID_ANY, wxT("Położenie pł."), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText11->Wrap( -1 );
 	bSizer9->Add( m_staticText11, 0, wxALL, 5 );
 	
@@ -142,12 +93,8 @@ MyFrame1::MyFrame1( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	m_panel1->Connect( wxEVT_PAINT, wxPaintEventHandler( MyFrame1::Redraw ), NULL, this );
 	m_panel1->Connect( wxEVT_SIZE, wxSizeEventHandler( MyFrame1::PanelResized ), NULL, this );
 	m_panel2->Connect( wxEVT_PAINT, wxPaintEventHandler( MyFrame1::RedrawCSection ), NULL, this );
-	m_TextCtrlVelocityX->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( MyFrame1::VelocityXOnText ), NULL, this );
-	m_TextCtrlVelocityY->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( MyFrame1::VelocityYOnText ), NULL, this );
-	m_textCtrlVelocityZ->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( MyFrame1::VelocityZOnText ), NULL, this );
-	m_textCtrlPlaneX->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( MyFrame1::PlaneXOnText ), NULL, this );
-	m_textCtrlPlaneY->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( MyFrame1::PlaneYOnText ), NULL, this );
-	m_textCtrlPlaneZ->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( MyFrame1::PlaneZOnText ), NULL, this );
+	m_TextCtrlVelocityY->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( MyFrame1::VelocityOnText ), NULL, this );
+	m_choicePlane->Connect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( MyFrame1::PlaneChanged ), NULL, this );
 	m_buttonPrismData->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MyFrame1::PrismDataClick ), NULL, this );
 	m_buttonSaveAnimation->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MyFrame1::SaveAnimationClick ), NULL, this );
 	m_sliderPlaneLocation->Connect( wxEVT_SCROLL_CHANGED, wxScrollEventHandler( MyFrame1::PlaneLocationOnScrollChanged ), NULL, this );
@@ -159,12 +106,8 @@ MyFrame1::~MyFrame1()
 	m_panel1->Disconnect( wxEVT_PAINT, wxPaintEventHandler( MyFrame1::Redraw ), NULL, this );
 	m_panel1->Disconnect( wxEVT_SIZE, wxSizeEventHandler( MyFrame1::PanelResized ), NULL, this );
 	m_panel2->Disconnect( wxEVT_PAINT, wxPaintEventHandler( MyFrame1::RedrawCSection ), NULL, this );
-	m_TextCtrlVelocityX->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( MyFrame1::VelocityXOnText ), NULL, this );
-	m_TextCtrlVelocityY->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( MyFrame1::VelocityYOnText ), NULL, this );
-	m_textCtrlVelocityZ->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( MyFrame1::VelocityZOnText ), NULL, this );
-	m_textCtrlPlaneX->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( MyFrame1::PlaneXOnText ), NULL, this );
-	m_textCtrlPlaneY->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( MyFrame1::PlaneYOnText ), NULL, this );
-	m_textCtrlPlaneZ->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( MyFrame1::PlaneZOnText ), NULL, this );
+	m_TextCtrlVelocityY->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( MyFrame1::VelocityOnText ), NULL, this );
+	m_choicePlane->Disconnect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( MyFrame1::PlaneChanged ), NULL, this );
 	m_buttonPrismData->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MyFrame1::PrismDataClick ), NULL, this );
 	m_buttonSaveAnimation->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MyFrame1::SaveAnimationClick ), NULL, this );
 	m_sliderPlaneLocation->Disconnect( wxEVT_SCROLL_CHANGED, wxScrollEventHandler( MyFrame1::PlaneLocationOnScrollChanged ), NULL, this );

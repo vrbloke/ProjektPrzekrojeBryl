@@ -17,54 +17,6 @@ UIFrame::~UIFrame() {
   m_stp->Kill();
 }
 
-void UIFrame::VelocityXOnText(wxCommandEvent& event) { 
-  try {
-    m_cfg->setVx(std::stof(static_cast<std::string>(event.GetString())));
-  }
-  catch (const std::invalid_argument& ex) {}
-  catch (const std::out_of_range& ex) {}
-}
-
-void UIFrame::VelocityYOnText(wxCommandEvent& event) {
-  try {
-    m_cfg->setVy(std::stof(static_cast<std::string>(event.GetString())));
-  }
-  catch (const std::invalid_argument& ex) {}
-  catch (const std::out_of_range& ex) {}
-}
-
-void UIFrame::VelocityZOnText(wxCommandEvent& event) {
-  try {
-    m_cfg->setVz(std::stof(static_cast<std::string>(event.GetString())));
-  }
-  catch (const std::invalid_argument& ex) {}
-  catch (const std::out_of_range& ex) {}
-}
-
-void UIFrame::PlaneXOnText(wxCommandEvent& event) {
-  try {
-    m_cfg->setPx(std::stof(static_cast<std::string>(event.GetString())));
-  }
-  catch (const std::invalid_argument& ex) {}
-  catch (const std::out_of_range& ex) {}
-}
-
-void UIFrame::PlaneYOnText(wxCommandEvent& event) {
-  try {
-    m_cfg->setPy(std::stof(static_cast<std::string>(event.GetString())));
-  }
-  catch (const std::invalid_argument& ex) {}
-  catch (const std::out_of_range& ex) {}
-}
-
-void UIFrame::PlaneZOnText(wxCommandEvent& event) {
-  try {
-    m_cfg->setPz(std::stof(static_cast<std::string>(event.GetString())));
-  }
-  catch (const std::invalid_argument& ex) {}
-  catch (const std::out_of_range& ex) {}
-}
-
 void UIFrame::PrismDataClick(wxCommandEvent& event) {
   wxFileDialog WxOpenFileDialog(this, _("Choose a file"), _(""), _(""), _("Geometry file (*.geo)|*.geo"), wxFD_OPEN | wxFD_FILE_MUST_EXIST);
 
@@ -114,4 +66,12 @@ void UIFrame::RedrawCSection() {
     m_stp->Run();
   wxClientDC dc(m_panel2);
   //m_rnd->RenderCSection(&dc, m_panel2->GetSize().x, m_panel2->GetSize().y);
+}
+
+void UIFrame::PlaneChanged(wxCommandEvent& event) {
+  //m_cfg->SetPlane(event.GetSelection() + 1);
+}
+
+void UIFrame::VelocityOnText(wxCommandEvent& event) {
+  //m_cfg->SetVelocity(std::stof(static_cast<std::string>(event.GetString()));
 }
