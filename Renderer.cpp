@@ -1,5 +1,7 @@
 #include "Renderer.h"
 
+#include <fstream>
+
 /*
 Przy reskalowaniu okna metody wxwidget czêsto wyrzucaj¹ b³êdy - brak mozliwosci skalowania okna?
 */
@@ -65,6 +67,8 @@ void Renderer::Render(wxDC* parentDC, int width, int height) {
 void Renderer::RenderCSection(wxDC* parentDC, int width, int height) {
 	wxBufferedDC dc(parentDC);
 
+	std::ofstream CSectionLog("csectionlog.txt");
+
 	const int size_x = m_cfg->getSizeX();
 	const int size_y = m_cfg->getSizeY();
 	const int pos_x = m_cfg->getPosX();
@@ -76,8 +80,62 @@ void Renderer::RenderCSection(wxDC* parentDC, int width, int height) {
 	dc.SetDeviceOrigin(pos_x + size_x / 2, pos_y + size_y / 2);
 
 	std::vector<Segment> data = m_cfg->getData();
+	std::vector<wxPoint> intersection_points;
 
-	m_selected_plane = (PlaneID)m_cfg->getPlaneId()
+	m_selected_plane = (PlaneID)m_cfg->getPlaneId();
+
+	// Find cross-section points
+	if (m_cfg->isGeoLoaded()) {
+		for (int i = 0; i < data.size(); i++) {
+			Vector4 start(data[i].begin.x, data[i].begin.y, data[i].begin.z);
+			Vector4 end(data[i].end.x, data[i].end.y, data[i].end.z);
+			double known_coord = m_plane_pos;
+			double d;
+			Vector4 intersection;
+			Point2 intersection2d;
+
+			// Find intersection in 2d space
+			switch (m_selected_plane) {
+			case PlaneID::OYZ: // KNOWN X
+				if (abs(known_coord - start.GetX()) <= abs(end.GetX() - start.GetX())) {
+					d = (known_coord - start.GetX())/(end.GetX() - start.GetX());
+					intersection = PointOnLine(start, end, d);
+					intersection2d = Point2(intersection.GetY(), intersection.GetZ());
+				}
+				break;
+			case PlaneID::OXZ: // KNOWN Y
+				if (abs(known_coord - start.GetY()) <= abs(end.GetY() - start.GetY())) {
+					d = (known_coord - start.GetY())/(end.GetY() - start.GetY());
+					intersection = PointOnLine(start, end, d);
+					intersection2d = Point2(intersection.GetX(), intersection.GetZ());
+				}
+				break;
+			case PlaneID::OXY: // KNOWN Z
+				if (abs(known_coord - start.GetZ()) <= abs(end.GetZ() - start.GetZ())) {
+					d = (known_coord - start.GetZ()) / (end.GetZ() - start.GetZ());
+					intersection = PointOnLine(start, end, d);
+					intersection2d = Point2(intersection.GetX(), intersection.GetY());
+				}
+				break;
+			}
+
+			// Rescale to fit DC
+			intersection2d.x *= size_x;
+			intersection2d.y *= size_y;
+
+			intersection_points.push_back(wxPoint(intersection2d.x, intersection2d.y));
+			CSectionLog << intersection_points[intersection_points.size() - 1].x << '\t' << intersection_points[intersection_points.size() - 1].y << std::endl;
+		}
+	}
+
+	CSectionLog << std::endl;
+
+	// Draw cross-section points
+	if (!intersection_points.empty()) {
+		for (int i = 0; i < intersection_points.size() - 1; i++) {
+			dc.DrawLine(intersection_points[i], intersection_points[i + 1]);
+		}
+	}
 }
 
 Vector4 Renderer::Scale(Vector4& original)

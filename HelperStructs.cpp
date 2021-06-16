@@ -83,3 +83,11 @@ Vector3 Matrix3::operator* (const Vector3& gVector)
   }
   return tmp;
 }
+
+Vector4 PointOnLine(const Vector4& start, const Vector4& end, const double d) {
+  return Vector4(
+    start.GetX() + d * (end.GetX() - end.GetX()),
+    start.GetY() + d * (end.GetY() - end.GetY()),
+    start.GetZ() + d * (end.GetZ() - end.GetZ())
+  );
+}
