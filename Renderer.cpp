@@ -84,13 +84,27 @@ void Renderer::RenderCSection(wxDC* parentDC, int width, int height) {
 	std::vector<Segment> cross_data;
 	std::vector<wxPoint> cross_points;
 
+	double Point::* comp_coord = &Point::x;
+	switch (m_selected_plane) {
+	case PlaneID::OYZ:
+		comp_coord = &Point::x;
+		break;
+	case PlaneID::OXZ:
+		comp_coord = &Point::y;
+		break;
+	case PlaneID::OXY:
+		comp_coord = &Point::z;
+		break;
+	}
+
+	if(m_cfg->isGeoLoaded())
 	for (int i = 0; i < data.size(); i++)
 	{
-		if (data[i].begin.y < pos && data[i].end.y > pos)
+		if (data[i].begin.*comp_coord < pos && data[i].end.*comp_coord > pos)
 		{
 			cross_data.push_back(data[i]);
 
-			double tmp_x = cross_data[cross_data.size()-1].begin.x;
+			double tmp_x = cross_data[cross_data.size() - 1].begin.x;
 			double tmp_y = cross_data[cross_data.size() - 1].begin.y;
 			double tmp_z = cross_data[cross_data.size() - 1].begin.z;
 
@@ -103,7 +117,7 @@ void Renderer::RenderCSection(wxDC* parentDC, int width, int height) {
 			cross_data[cross_data.size() - 1].end.z = tmp_z;
 		}
 
-		if (data[i].end.y < pos && data[i].begin.y > pos)
+		if (data[i].end.*comp_coord < pos && data[i].begin.*comp_coord > pos)
 		{
 			cross_data.push_back(data[i]);
 		}
@@ -113,34 +127,40 @@ void Renderer::RenderCSection(wxDC* parentDC, int width, int height) {
 	int text_pos = 10;
 	if (m_cfg->isGeoLoaded())
 	{
-		if(!cross_data.empty())
-		for (int i = 0; i < cross_data.size(); i++)
-		{
-			double y_distance_start = fabs(pos - cross_data[i].begin.y);
-			double y_distance_end = fabs(pos - cross_data[i].end.y);
-			double y_distance = y_distance_start + y_distance_end;
+		if (!cross_data.empty())
+			for (int i = 0; i < cross_data.size(); i++)
+			{
+				double distance_start = fabs(pos - cross_data[i].begin.*comp_coord);
+				double distance_end = fabs(pos - cross_data[i].end.*comp_coord);
+				double distance = distance_start + distance_end;
 
-			// (dystans miedzy punktem pocz¹tkowym, a wartoci¹ y p³aszczyzny) / (dystans miêdzy dwoma punktami)
-			double scale = y_distance_start / y_distance;
-			// Odlegloæ miêdzy dwoma punktami (x, y, z)
-			Vector4 v = Vector4(cross_data[i].end.x - cross_data[i].begin.x, cross_data[i].end.y - cross_data[i].begin.y, cross_data[i].end.z - cross_data[i].begin.z);
-			// Przeskalowanie odleg³oci miêdzy dwoma punktami 
-			v.Set(v.GetX() * scale, v.GetY() * scale, v.GetZ() * scale);
+				// (dystans miedzy punktem pocz¹tkowym, a wartoci¹ y p³aszczyzny) / (dystans miêdzy dwoma punktami)
+				double scale = distance_start / distance;
+				// Odlegloæ miêdzy dwoma punktami (x, y, z)
+				Vector4 v = Vector4(cross_data[i].end.x - cross_data[i].begin.x, cross_data[i].end.y - cross_data[i].begin.y, cross_data[i].end.z - cross_data[i].begin.z);
+				// Przeskalowanie odleg³oci miêdzy dwoma punktami 
+				v.Set(v.GetX() * scale, v.GetY() * scale, v.GetZ() * scale);
 
-			// Dodanie przeskalowanej odleg³oci do punktu pocz¹tkowego
-			Vector4 cross_point = Vector4(cross_data[i].begin.x + v.GetX(), cross_data[i].begin.y + v.GetY(), cross_data[i].begin.z + v.GetZ());
+				// Dodanie przeskalowanej odleg³oci do punktu pocz¹tkowego
+				Vector4 cross_point = Vector4(cross_data[i].begin.x + v.GetX(), cross_data[i].begin.y + v.GetY(), cross_data[i].begin.z + v.GetZ());
 
-			cross_points.push_back(wxPoint(cross_point.GetX() * m_cfg->getSizeX(), cross_point.GetZ() * m_cfg->getSizeY()));
-
-			//dc.DrawCircle(cross_point.GetX() * m_cfg->getSizeX(), cross_point.GetZ() * m_cfg->getSizeY(), 5);
-			//text_pos += 50;
-		}
+				switch (m_selected_plane) {
+				case PlaneID::OYZ:
+					cross_points.push_back(wxPoint(cross_point.GetY() * m_cfg->getSizeX(), cross_point.GetZ() * m_cfg->getSizeY()));
+					break;
+				case PlaneID::OXZ:
+					cross_points.push_back(wxPoint(cross_point.GetX() * m_cfg->getSizeX(), cross_point.GetZ() * m_cfg->getSizeY()));
+					break;
+				case PlaneID::OXY:
+					cross_points.push_back(wxPoint(cross_point.GetX() * m_cfg->getSizeX(), cross_point.GetY() * m_cfg->getSizeY()));
+					break;
+				}
+			}
 
 		if (!cross_points.empty()) {
 			for (int i = 0; i < 1; i++) {
 				std::sort(cross_points.begin(), cross_points.end(), CompareOxAngle);
 				dc.DrawPolygon(cross_points.size(), &cross_points[0]);
-				//std::shuffle(cross_points.begin(), cross_points.end(), m_rng);
 			}
 		}
 	}

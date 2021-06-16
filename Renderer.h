@@ -49,4 +49,5 @@ public:
   }
   void Render(wxDC* parentDC, int width, int height);
   void RenderCSection(wxDC* parentDC, int width, int height);
+  void RenderCSectionG(wxDC* parentDC, int width, int height);
 };
