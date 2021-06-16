@@ -22,7 +22,6 @@
 #include <wx/button.h>
 #include <wx/statline.h>
 #include <wx/sizer.h>
-#include <wx/slider.h>
 #include <wx/frame.h>
 
 ///////////////////////////////////////////////////////////////////////////
@@ -45,8 +44,6 @@ class MyFrame1 : public wxFrame
 		wxButton* m_buttonPrismData;
 		wxButton* m_buttonSaveAnimation;
 		wxStaticLine* m_staticline1;
-		wxStaticText* m_staticText11;
-		wxSlider* m_sliderPlaneLocation;
 		
 		// Virtual event handlers, overide them in your derived class
 		virtual void Redraw( wxPaintEvent& event ) { event.Skip(); }
@@ -56,12 +53,11 @@ class MyFrame1 : public wxFrame
 		virtual void PlaneChanged( wxCommandEvent& event ) { event.Skip(); }
 		virtual void PrismDataClick( wxCommandEvent& event ) { event.Skip(); }
 		virtual void SaveAnimationClick( wxCommandEvent& event ) { event.Skip(); }
-		virtual void PlaneLocationOnScrollChanged( wxScrollEvent& event ) { event.Skip(); }
 		
 	
 	public:
 		
-		MyFrame1( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("Przekroje brył 3D"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 1200,487 ), long style = wxCAPTION|wxCLOSE_BOX|wxSYSTEM_MENU|wxCLIP_CHILDREN|wxTAB_TRAVERSAL );
+		MyFrame1( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("Przekroje bry\u0142 3D"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 1200,487 ), long style = wxCAPTION|wxCLOSE_BOX|wxSYSTEM_MENU|wxCLIP_CHILDREN|wxTAB_TRAVERSAL );
 		
 		~MyFrame1();
 	

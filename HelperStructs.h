@@ -4,6 +4,7 @@
 
 #include <iostream>
 #include <array>
+#include <functional>
 
 struct Vector4 {
   std::array<double,4> data;
@@ -101,3 +102,5 @@ struct Segment {
 };
 
 bool CompareOxAngle(const wxPoint& p1, const wxPoint& p2);
+
+std::function<bool(const wxPoint&, const wxPoint&)> CompareAngleGivenCenter(wxPoint center);

@@ -92,9 +92,14 @@ Vector4 PointOnLine(const Vector4& start, const Vector4& end, const double d) {
   );
 
 }
+
 bool CompareOxAngle(const wxPoint& p1, const wxPoint& p2) {
   double p1a = atan2(p1.y, p1.x);
   double p2a = atan2(p2.y, p2.x);
 
   return p1a < p2a;
+}
+
+std::function<bool(const wxPoint&, const wxPoint&)> CompareAngleGivenCenter(wxPoint center) {
+  return [&](const wxPoint& p1, const wxPoint& p2) { return CompareOxAngle(p1 - center, p2 - center); };
 }

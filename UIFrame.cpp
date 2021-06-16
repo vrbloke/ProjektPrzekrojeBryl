@@ -10,7 +10,7 @@ m_cfg(new Configurer(this)),
 m_rnd(new Renderer(m_cfg)),
 m_stp(new FrameStepper(this))
 {
-    m_cfg->setPos(m_sliderPlaneLocation->GetValue());
+    //m_cfg->setPos(m_sliderPlaneLocation->GetValue());
 }
 
 UIFrame::~UIFrame() {
@@ -42,9 +42,9 @@ void UIFrame::PanelResized(wxSizeEvent& event) {
   m_cfg->setPosY(m_panel1->GetPosition().y);
 }
 
-void UIFrame::PlaneLocationOnScrollChanged(wxScrollEvent& event) {
-    m_cfg->setPos(m_sliderPlaneLocation->GetValue());
-}
+//void UIFrame::PlaneLocationOnScrollChanged(wxScrollEvent& event) {
+//    m_cfg->setPos(m_sliderPlaneLocation->GetValue());
+//}
 
 void UIFrame::Redraw(wxPaintEvent& event) {
   Redraw();

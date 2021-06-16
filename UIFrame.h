@@ -22,7 +22,7 @@ public:
 
 	virtual void PrismDataClick(wxCommandEvent& event) override;
 	virtual void SaveAnimationClick(wxCommandEvent& event) override;
-	virtual void PlaneLocationOnScrollChanged(wxScrollEvent& event) override;
+	//virtual void PlaneLocationOnScrollChanged(wxScrollEvent& event) override;
 	virtual void PanelResized(wxSizeEvent& event) override;
 
 	void Redraw(wxPaintEvent& event) override;

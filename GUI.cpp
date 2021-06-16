@@ -29,14 +29,15 @@ MyFrame1::MyFrame1( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	wxBoxSizer* bSizer2;
 	bSizer2 = new wxBoxSizer( wxVERTICAL );
 	
-	m_staticText1 = new wxStaticText( this, wxID_ANY, wxT("Prędkość"), wxDefaultPosition, wxDefaultSize, 0 );
+	bSizer2->SetMinSize( wxSize( 280,-1 ) ); 
+	m_staticText1 = new wxStaticText( this, wxID_ANY, wxT("Pr\u0119dko\u015b\u0107"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText1->Wrap( -1 );
 	bSizer2->Add( m_staticText1, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5 );
 	
 	m_TextCtrlVelocityY = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize( 100,-1 ), 0 );
 	bSizer2->Add( m_TextCtrlVelocityY, 0, wxALIGN_CENTER_HORIZONTAL|wxALL, 5 );
 	
-	m_staticText111 = new wxStaticText( this, wxID_ANY, wxT("Płaszczyzna"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText111 = new wxStaticText( this, wxID_ANY, wxT("P\u0142aszczyzna"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText111->Wrap( -1 );
 	bSizer2->Add( m_staticText111, 0, wxALIGN_CENTER|wxALL, 5 );
 	
@@ -46,10 +47,10 @@ MyFrame1::MyFrame1( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	m_choicePlane->SetSelection( 0 );
 	bSizer2->Add( m_choicePlane, 0, wxALIGN_CENTER_HORIZONTAL|wxALL, 5 );
 	
-	m_buttonPrismData = new wxButton( this, wxID_ANY, wxT("Wczytaj dane bryły"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_buttonPrismData = new wxButton( this, wxID_ANY, wxT("Wczytaj dane bry\u0142y"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer2->Add( m_buttonPrismData, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5 );
 	
-	m_buttonSaveAnimation = new wxButton( this, wxID_ANY, wxT("Zapisz animację"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_buttonSaveAnimation = new wxButton( this, wxID_ANY, wxT("Zapisz animacj\u0119"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer2->Add( m_buttonSaveAnimation, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5 );
 	
 	wxBoxSizer* bSizer6;
@@ -60,25 +61,6 @@ MyFrame1::MyFrame1( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	
 	
 	bSizer2->Add( bSizer6, 1, wxALIGN_CENTER_VERTICAL|wxALL|wxEXPAND, 5 );
-	
-	wxBoxSizer* bSizer8;
-	bSizer8 = new wxBoxSizer( wxVERTICAL );
-	
-	wxBoxSizer* bSizer9;
-	bSizer9 = new wxBoxSizer( wxHORIZONTAL );
-	
-	m_staticText11 = new wxStaticText( this, wxID_ANY, wxT("Położenie pł."), wxDefaultPosition, wxDefaultSize, 0 );
-	m_staticText11->Wrap( -1 );
-	bSizer9->Add( m_staticText11, 0, wxALL, 5 );
-	
-	m_sliderPlaneLocation = new wxSlider( this, wxID_ANY, 50, 0, 100, wxDefaultPosition, wxSize( 200,-1 ), wxSL_HORIZONTAL );
-	bSizer9->Add( m_sliderPlaneLocation, 0, wxALL, 5 );
-	
-	
-	bSizer8->Add( bSizer9, 1, wxEXPAND, 5 );
-	
-	
-	bSizer2->Add( bSizer8, 1, wxALIGN_CENTER_HORIZONTAL|wxEXPAND, 5 );
 	
 	
 	bSizer1->Add( bSizer2, 0, 0, 5 );
@@ -97,7 +79,6 @@ MyFrame1::MyFrame1( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	m_choicePlane->Connect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( MyFrame1::PlaneChanged ), NULL, this );
 	m_buttonPrismData->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MyFrame1::PrismDataClick ), NULL, this );
 	m_buttonSaveAnimation->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MyFrame1::SaveAnimationClick ), NULL, this );
-	m_sliderPlaneLocation->Connect( wxEVT_SCROLL_CHANGED, wxScrollEventHandler( MyFrame1::PlaneLocationOnScrollChanged ), NULL, this );
 }
 
 MyFrame1::~MyFrame1()
@@ -110,6 +91,5 @@ MyFrame1::~MyFrame1()
 	m_choicePlane->Disconnect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( MyFrame1::PlaneChanged ), NULL, this );
 	m_buttonPrismData->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MyFrame1::PrismDataClick ), NULL, this );
 	m_buttonSaveAnimation->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MyFrame1::SaveAnimationClick ), NULL, this );
-	m_sliderPlaneLocation->Disconnect( wxEVT_SCROLL_CHANGED, wxScrollEventHandler( MyFrame1::PlaneLocationOnScrollChanged ), NULL, this );
 	
 }
