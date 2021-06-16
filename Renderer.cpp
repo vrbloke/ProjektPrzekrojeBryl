@@ -1,9 +1,9 @@
-#include "Renderer.h"
+ï»¿#include "Renderer.h"
 
 #include <fstream>
 
 /*
-Przy reskalowaniu okna metody wxwidget czêsto wyrzucaj¹ b³êdy - brak mozliwosci skalowania okna?
+Przy reskalowaniu okna metody wxwidget czÄ™sto wyrzucajÄ… bÅ‚Ä™dy - brak mozliwosci skalowania okna?
 */
 
 void Renderer::Render(wxDC* parentDC, int width, int height) {
@@ -35,11 +35,6 @@ void Renderer::Render(wxDC* parentDC, int width, int height) {
 
 	// Choosing plane
 	m_selected_plane = (PlaneID)m_cfg->getPlaneId(); // 1 - X axis plane, 2 - Y axis plane, 3 - Z axis plane
-
-	// Testowanie algorytmów
-	//Test(data);
-	//Test2(data, axis_plane);
-	//CogenSutherland(data);
 
 	// Drawing figure
 	Vector4 start_point;
@@ -78,64 +73,80 @@ void Renderer::RenderCSection(wxDC* parentDC, int width, int height) {
 	dc.DestroyClippingRegion();
 	dc.SetClippingRegion(pos_x, pos_y, size_x, size_y);
 	dc.SetDeviceOrigin(pos_x + size_x / 2, pos_y + size_y / 2);
+	dc.SetBrush(wxBrush(wxColor(0, 0, 255)));
 
 	std::vector<Segment> data = m_cfg->getData();
-	std::vector<wxPoint> intersection_points;
 
 	m_selected_plane = (PlaneID)m_cfg->getPlaneId();
 
-	// Find cross-section points
-	if (m_cfg->isGeoLoaded()) {
-		for (int i = 0; i < data.size(); i++) {
-			Vector4 start(data[i].begin.x, data[i].begin.y, data[i].begin.z);
-			Vector4 end(data[i].end.x, data[i].end.y, data[i].end.z);
-			double known_coord = m_plane_pos;
-			double d;
-			Vector4 intersection;
-			Point2 intersection2d;
+	double pos = m_plane_pos;
 
-			// Find intersection in 2d space
-			switch (m_selected_plane) {
-			case PlaneID::OYZ: // KNOWN X
-				if (abs(known_coord - start.GetX()) <= abs(end.GetX() - start.GetX())) {
-					d = (known_coord - start.GetX())/(end.GetX() - start.GetX());
-					intersection = PointOnLine(start, end, d);
-					intersection2d = Point2(intersection.GetY(), intersection.GetZ());
-				}
-				break;
-			case PlaneID::OXZ: // KNOWN Y
-				if (abs(known_coord - start.GetY()) <= abs(end.GetY() - start.GetY())) {
-					d = (known_coord - start.GetY())/(end.GetY() - start.GetY());
-					intersection = PointOnLine(start, end, d);
-					intersection2d = Point2(intersection.GetX(), intersection.GetZ());
-				}
-				break;
-			case PlaneID::OXY: // KNOWN Z
-				if (abs(known_coord - start.GetZ()) <= abs(end.GetZ() - start.GetZ())) {
-					d = (known_coord - start.GetZ()) / (end.GetZ() - start.GetZ());
-					intersection = PointOnLine(start, end, d);
-					intersection2d = Point2(intersection.GetX(), intersection.GetY());
-				}
-				break;
+	std::vector<Segment> cross_data;
+	std::vector<wxPoint> cross_points;
+
+	for (int i = 0; i < data.size(); i++)
+	{
+		if (data[i].begin.y < pos && data[i].end.y > pos)
+		{
+			cross_data.push_back(data[i]);
+
+			double tmp_x = cross_data[cross_data.size()-1].begin.x;
+			double tmp_y = cross_data[cross_data.size() - 1].begin.y;
+			double tmp_z = cross_data[cross_data.size() - 1].begin.z;
+
+			cross_data[cross_data.size() - 1].begin.x = cross_data[cross_data.size() - 1].end.x;
+			cross_data[cross_data.size() - 1].begin.y = cross_data[cross_data.size() - 1].end.y;
+			cross_data[cross_data.size() - 1].begin.z = cross_data[cross_data.size() - 1].end.z;
+
+			cross_data[cross_data.size() - 1].end.x = tmp_x;
+			cross_data[cross_data.size() - 1].end.y = tmp_y;
+			cross_data[cross_data.size() - 1].end.z = tmp_z;
+		}
+
+		if (data[i].end.y < pos && data[i].begin.y > pos)
+		{
+			cross_data.push_back(data[i]);
+		}
+	}
+
+	dc.SetPen(wxColor(0, 0, 255));
+	int text_pos = 10;
+	if (m_cfg->isGeoLoaded())
+	{
+		if(!cross_data.empty())
+		for (int i = 0; i < cross_data.size(); i++)
+		{
+			double y_distance_start = fabs(pos - cross_data[i].begin.y);
+			double y_distance_end = fabs(pos - cross_data[i].end.y);
+			double y_distance = y_distance_start + y_distance_end;
+
+			// (dystans miedzy punktem poczÂ¹tkowym, a wartoÂœciÂ¹ y pÂ³aszczyzny) / (dystans miÃªdzy dwoma punktami)
+			double scale = y_distance_start / y_distance;
+			// OdlegloÂœÃ¦ miÃªdzy dwoma punktami (x, y, z)
+			Vector4 v = Vector4(cross_data[i].end.x - cross_data[i].begin.x, cross_data[i].end.y - cross_data[i].begin.y, cross_data[i].end.z - cross_data[i].begin.z);
+			// Przeskalowanie odlegÂ³oÂœci miÃªdzy dwoma punktami 
+			v.Set(v.GetX() * scale, v.GetY() * scale, v.GetZ() * scale);
+
+			// Dodanie przeskalowanej odlegÂ³oÂœci do punktu poczÂ¹tkowego
+			Vector4 cross_point = Vector4(cross_data[i].begin.x + v.GetX(), cross_data[i].begin.y + v.GetY(), cross_data[i].begin.z + v.GetZ());
+
+			cross_points.push_back(wxPoint(cross_point.GetX() * m_cfg->getSizeX(), cross_point.GetZ() * m_cfg->getSizeY()));
+
+			//dc.DrawCircle(cross_point.GetX() * m_cfg->getSizeX(), cross_point.GetZ() * m_cfg->getSizeY(), 5);
+			//text_pos += 50;
+		}
+
+		if (!cross_points.empty()) {
+			for (int i = 0; i < 1; i++) {
+				std::sort(cross_points.begin(), cross_points.end(), CompareOxAngle);
+				dc.DrawPolygon(cross_points.size(), &cross_points[0]);
+				//std::shuffle(cross_points.begin(), cross_points.end(), m_rng);
 			}
-
-			// Rescale to fit DC
-			intersection2d.x *= size_x;
-			intersection2d.y *= size_y;
-
-			intersection_points.push_back(wxPoint(intersection2d.x, intersection2d.y));
-			CSectionLog << intersection_points[intersection_points.size() - 1].x << '\t' << intersection_points[intersection_points.size() - 1].y << std::endl;
 		}
 	}
 
-	CSectionLog << std::endl;
-
-	// Draw cross-section points
-	if (!intersection_points.empty()) {
-		for (int i = 0; i < intersection_points.size() - 1; i++) {
-			dc.DrawLine(intersection_points[i], intersection_points[i + 1]);
-		}
-	}
+	dc.SetPen(wxColor(0, 0, 0));
+	dc.SetBrush(*wxTRANSPARENT_BRUSH);
 }
 
 Vector4 Renderer::Scale(Vector4& original)
@@ -229,7 +240,7 @@ Vector4 Renderer::TransformVector(Vector4& original, double fov, double x_angle,
 	return to_return;
 }
 
-// Rysuje osie uk³adu wspó³rzêdnych oraz informacjê w rogu panelu o ich kolorach.
+// Rysuje osie ukÅ‚adu wspÃ³Å‚rzÄ™dnych oraz informacjÄ™ w rogu panelu o ich kolorach.
 void Renderer::DrawAxes(wxBufferedDC& dc, double fov, double x_angle, double y_angle, double z_angle)
 {
 	// Drawing X axis
@@ -389,7 +400,7 @@ void Renderer::DrawPlane(wxDC& dc, PlaneID id, double fov, double x_angle, doubl
 	}
 }
 
-// Przesuwa p³aszczyznê wzd³u¿ jej wektora prêdkoœci. Ponadto obs³ugujê zapisywanie animacji do plików.
+// Przesuwa pÅ‚aszczyznÄ™ wzdÅ‚uÅ¼ jej wektora prÄ™dkoÅ›ci. Ponadto obsÅ‚ugujÄ™ zapisywanie animacji do plikÃ³w.
 void Renderer::UpdatePlanePos(wxBufferedDC& dc, float speed)
 {
 	m_plane_pos += (speed / 1000);
@@ -426,123 +437,4 @@ void Renderer::UpdatePlanePos(wxBufferedDC& dc, float speed)
 		m_plane_pos = -2;
 		m_saving = true;
 	}
-}
-
-void Renderer::Test(std::vector<Segment>& data)
-{
-	int plane_pos_x = 0;
-	int plane_pos_y = 0;
-	int plane_pos_z = 0;
-
-	for (int i = 0; i < data.size(); i++)
-	{
-		Vector4 v;
-		v.Set(data[i].begin.x - data[i].end.x, data[i].begin.y - data[i].end.y, data[i].begin.z - data[i].end.z);
-
-		double x = data[i].begin.x;
-		double x_lambda = v.GetX();
-
-		double y = data[i].begin.y;
-		double y_lambda = v.GetY();
-
-		double z = data[i].begin.z;
-		double z_lambda = v.GetZ();
-
-		double fp = (plane_pos_x - x) / 2 + (plane_pos_y -y) / 2 + (plane_pos_x  - z) / 2;
-
-		if (fp == 0)
-		{
-			if (data[i].begin.x > 0)
-				data[i].begin.x = plane_pos_x;
-
-			if (data[i].end.x < 0)
-				data[i].end.x = plane_pos_x;
-		}
-	}
-}
-
-void Renderer::Test2(std::vector<Segment>& data, int axis_plane)
-{
-	for (int i = 0; i < data.size(); i++)
-	{
-		switch (axis_plane)
-		{
-		case 1:
-			if (data[i].begin.y > 0 || data[i].end.y > 0)
-			{
-				if (data[i].begin.x < m_plane_pos + 1.0)
-					data[i].begin.y = 0;
-				if (data[i].end.x < m_plane_pos + 1.0)
-					data[i].end.y = 0;
-			}
-			break;
-		case 2:
-			if (data[i].begin.z > 0 || data[i].end.z > 0)
-			{
-				if (data[i].begin.y < m_plane_pos + 1.0)
-					data[i].begin.z = 0;
-				if (data[i].end.y < m_plane_pos + 1.0)
-					data[i].end.z = 0;
-			}
-			break;
-		case 3:
-			if (data[i].begin.y > 0 || data[i].end.y > 0)
-			{
-				if (data[i].begin.z < m_plane_pos + 1.0)
-					data[i].begin.y = 0;
-				if (data[i].end.z < m_plane_pos + 1.0)
-					data[i].end.y = 0;
-			}
-			break;
-		default:
-			break;
-		}
-	}
-}
-
-void Renderer::Test3(std::vector<Segment>& data)
-{
-	/*
-	Steps:
-		calculate the centroid Z = (A + B + C + ...) / numPoints
-		calculate the normal n = AB cross BC
-		get the Vector from the centroid to the first point : ZA
-		order all points P by the signed angle ZA to ZP with normal n
-		(signed angle == angle(ZA, ZP) * sign(n dot(ZA cross ZP
-	*/
-	double centroid_x = 0;
-	double centroid_y = 0;
-	double centroid_z = 0;
-
-	for (int i = 0; i < data.size(); i++)
-	{
-		centroid_x += data[i].begin.x + data[i].end.x;
-		centroid_y += data[i].begin.y + data[i].end.y;
-		centroid_z += data[i].begin.z + data[i].end.z;
-
-		double dx = data[i].begin.x - data[i].end.x;
-		double dy = data[i].begin.y - data[i].end.y;
-		double dz = data[i].begin.z - data[i].end.z;
-	}
-	centroid_x = centroid_x / (data.size() * 2);
-	centroid_y = centroid_y / (data.size() * 2);
-	centroid_y = centroid_z / (data.size() * 2);
-}
-
-void Renderer::Test4(std::vector<Segment>& data)
-{
-	/*
-	* Active C as a fron clipping plane
-	* For all pixels do Z=0, I =-, Mp = 0
-	* For each solid S do:
-	*	Render all the daces of S togglin Mp
-	*	Deactivate C
-	*	Shade C and reset Mp where Mp == 1
-	* https://www.cc.gatech.edu/~jarek/papers/Capping.pdf
-	*/
-}
-
-void Renderer::CogenSutherland(std::vector<Segment>& data)
-{
-	//https://www.cs.drexel.edu/~david/Classes/CS430/Lectures/L-14_Color.6.pdf
 }

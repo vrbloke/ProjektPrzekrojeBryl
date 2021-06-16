@@ -5,6 +5,8 @@
 #include <wx/dcbuffer.h>
 
 #include <memory>
+#include <algorithm>
+#include <random>
 
 class Renderer {
 private:
@@ -21,6 +23,7 @@ private:
   PlaneID m_selected_plane;
   bool m_saving;
   unsigned short int frame;
+  std::default_random_engine m_rng;
 
   Vector4 Scale(Vector4& original);
   Vector4 Rotate(Vector4& original, double x_angle, double y_angle, double z_angle);
@@ -33,22 +36,15 @@ private:
 
   void DrawPlane(wxDC& dc, PlaneID id, double fov, double x_angle, double y_angle, double z_angle);
 
-  void DrawXPlane(wxBufferedDC& dc, double fov = 45, double x_angle = 0, double y_angle = 0, double z_angle = 0);
-  void DrawYPlane(wxBufferedDC& dc, double fov = 45, double x_angle = 0, double y_angle = 0, double z_angle = 0);
-  void DrawZPlane(wxBufferedDC& dc, double fov = 45, double x_angle = 0, double y_angle = 0, double z_angle = 0);
+  //bool CompareOxAngle(const wxPoint& p1, const wxPoint& p2) const;
 
   void UpdatePlanePos(wxBufferedDC& dc, float speed);
 
-  //Testowanie algorytmów do obcinania bry³
-  void Test(std::vector<Segment>& data); 
-  void Test2(std::vector<Segment>& data, int axis_plane);
-  void Test3(std::vector<Segment>& data);
-  void Test4(std::vector<Segment>& data);
-  void CogenSutherland(std::vector<Segment>& data);
-
 public:
   Renderer(std::shared_ptr<Configurer> cfg) : m_cfg(cfg), m_rotation_matrix(Matrix4()), 
-    m_matrix_set(false), m_plane_pos(-2), m_saving(false), frame(0), m_selected_plane((PlaneID)1) {
+    m_matrix_set(false), m_plane_pos(-2), m_saving(false), frame(0), m_selected_plane((PlaneID)1),
+    m_rng(std::default_random_engine())
+  {
     wxImage::AddHandler(new wxJPEGHandler);
   }
   void Render(wxDC* parentDC, int width, int height);

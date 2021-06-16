@@ -1,5 +1,7 @@
 #pragma once
 
+#include <wx/gdicmn.h>
+
 #include <iostream>
 #include <array>
 
@@ -97,3 +99,5 @@ struct Segment {
   Segment(Point _begin, Point _end) : begin(_begin), end(_end), color(Color(0, 0, 255)) {}
   Segment() : begin(Point()), end(Point()), color(Color(0, 0, 255)) {}
 };
+
+bool CompareOxAngle(const wxPoint& p1, const wxPoint& p2);
