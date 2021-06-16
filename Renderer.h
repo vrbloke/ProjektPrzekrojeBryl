@@ -37,8 +37,6 @@ private:
 
   void DrawPlane(wxDC& dc, PlaneID id, double fov, double x_angle, double y_angle, double z_angle);
 
-  //bool CompareOxAngle(const wxPoint& p1, const wxPoint& p2) const;
-
   void UpdatePlanePos(wxBufferedDC& dc, float speed);
 
 public:
@@ -50,5 +48,4 @@ public:
   }
   void Render(wxDC* parentDC, int width, int height);
   void RenderCSection(wxDC* parentDC, int width, int height);
-  void RenderCSectionG(wxDC* parentDC, int width, int height);
 };

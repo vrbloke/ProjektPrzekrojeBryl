@@ -61,8 +61,6 @@ public:
   std::vector<Segment>& getData() { return m_prismData; }
   void setData(std::vector<Segment>& _data) { m_prismData = _data; }
 
-  void startAnimation();
-
   void loadPrism(const char* filename);
   void saveAnimation(const char* filename);
 };

@@ -159,9 +159,6 @@ void Renderer::RenderCSection(wxDC* parentDC, int width, int height) {
 
 		if (!cross_points.empty()) {
 			for (int i = 0; i < 1; i++) {
-				//wxPoint center;
-				//center = std::accumulate(cross_points.begin(), cross_points.end(), wxPoint(0,0));
-				//center = center/cross_points.size();
 				std::sort(cross_points.begin(), cross_points.end(), CompareOxAngle);
 				dc.DrawPolygon(cross_points.size(), &cross_points[0]);
 			}
@@ -431,7 +428,7 @@ void Renderer::UpdatePlanePos(wxBufferedDC& dc, float speed)
 	if (m_saving)
 	{		
 		frame++;
-		std::string path = "D:\\Test\\" + std::to_string(frame) + ".jpg";
+		std::string path = "D:\\Test\\" + std::to_string(frame) + ".bmp";
 		wxBitmap bitmap = dc.GetAsBitmap();
 		wxImage image = bitmap.ConvertToImage();
 		image.SaveFile(path, wxBITMAP_TYPE_JPEG);
